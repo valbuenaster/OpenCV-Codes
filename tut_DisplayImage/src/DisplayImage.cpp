@@ -5,6 +5,7 @@
  *      Author: Luis Ariel Valbuena Reyes
  */
 #include <iostream>
+#include <string>
 #include <opencv2/opencv.hpp>
 
 using namespace std;
@@ -13,11 +14,13 @@ using namespace cv;
 int main( int argc, char** argv )
 {
 	Mat image;
-	image = imread( argv[1], 1 );
+	string argName = argv[1];
+	image = imread( argName, 1 );
 
 	if( argc != 2 || !image.data )
     {
-		cout << "No image data ... " << endl;
+		cout <<"argName = " << argName << endl;
+		cout << "argc = "<< argc << ", No image data ... " << endl;
 		return -1;
     }
 
