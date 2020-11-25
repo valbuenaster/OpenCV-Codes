@@ -1,0 +1,3 @@
+/home/luis/OpenCV-Codes/Open-Image/CMakeFiles/rebuild_cache.dir
+/home/luis/OpenCV-Codes/Open-Image/CMakeFiles/DisplayImage.dir
+/home/luis/OpenCV-Codes/Open-Image/CMakeFiles/edit_cache.dir
