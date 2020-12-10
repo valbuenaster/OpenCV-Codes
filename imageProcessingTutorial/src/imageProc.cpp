@@ -4,6 +4,7 @@
  *  Created on: Dec 8, 2020
  *      Author: luis
  */
+#include <iostream>
 
 #include "imageProc.h"
 
@@ -141,8 +142,8 @@ void filtering(Mat src, Mat img, int Kind)
 
 void demoDilation(Mat input, Mat output)
 {
-	int dilationElement = 0;
-	int dilationSize = 0;
+	//int dilationElement = 0;
+	//int dilationSize = 0;
 	int const max_elem = 2;
 	int const max_kernel_size = 21;
 	std::string windowName = "Dilation Demo";
@@ -150,28 +151,31 @@ void demoDilation(Mat input, Mat output)
 	temp.Str = windowName;
 	temp.input = input;
 	temp.output = output;
-	temp.dilationElement = dilationElement;
-	temp.dilationSize = dilationSize;
+	temp.dilationElement = 0;
+	temp.dilationSize = 0;
 
 	namedWindow(windowName,WINDOW_AUTOSIZE);
 
 	createTrackbar("Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", windowName,
-			&dilationElement, max_elem,
+			&temp.dilationElement, max_elem,
 			Dilation,&temp);
 
 	createTrackbar("Kernel size:\n 2n +1", windowName,
-			&dilationSize, max_kernel_size,
+			&temp.dilationSize, max_kernel_size,
 			Dilation,&temp);
 
-	Dilation(0,0);
 
+	//Dilation(0,0);
+	Dilation(0,&temp);
 
+	std::cout <<"End of Dilation demo"<<std::endl;
 	waitKey(0);
 }
 
 void Dilation(int , void * object)
 {
-	IoO * recTemp = reinterpret_cast<IoO *> (object);
+	//IoO * recTemp = reinterpret_cast<IoO *> (object);
+	IoO * recTemp = static_cast<struct IoO *> (object);
 	int dilationElement = recTemp->dilationElement;
 	int dilationSize = recTemp->dilationSize;
 
