@@ -48,18 +48,21 @@ int main()
 	cout << "Testing filters"<<endl;
 	std::string StrName1 = "Test1.png";
 	std::string  StrName2 = "Test2.png";
-	Mat inputFilter = imread(StrName1, IMREAD_COLOR);
+	Mat inputFilter = imread(StrName2, IMREAD_COLOR);
 	Mat destination = inputFilter.clone();
 	Mat dest_dilation = inputFilter.clone();
 	Mat dest_erosion = inputFilter.clone();
+	Mat dest_morphOp = inputFilter.clone();
 
-	displayImage(inputFilter, StrName1, Point(2*W,200),0);
+	displayImage(inputFilter, StrName2, Point(2*W,200),0);
 
-	filtering(inputFilter, destination, 1);
+	filtering(inputFilter, destination, 3);
 
 	cout << "Demostration Dilation and Erosion" << endl;
 
 	demoDilation(inputFilter,dest_dilation);
+	demoErosion(inputFilter,dest_erosion);
+	demoMorphologyOperation(inputFilter,dest_morphOp);
 
 	cout << "Llega aqui"<< endl;
 

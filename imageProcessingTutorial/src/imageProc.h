@@ -33,13 +33,20 @@ void filtering(Mat src, Mat img, int Kind);
 void demoDilation(Mat input, Mat output);
 void Dilation(int , void* object);
 
+void demoErosion(Mat input, Mat output);
+void Erosion(int , void* object);
+
+void demoMorphologyOperation(Mat inputFilter,Mat dest_morphOp);
+void MorphologyOperation(int , void* object);
+
 struct IoO
 {
 	Mat input;
 	Mat output;
 	std::string Str;
-	int dilationElement;
-	int dilationSize;
+	int Element;
+	int Size;
+	int Operation;
 };
 
 #endif /* SRC_IMAGEPROC_H_ */

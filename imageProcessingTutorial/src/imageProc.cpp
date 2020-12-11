@@ -151,17 +151,17 @@ void demoDilation(Mat input, Mat output)
 	temp.Str = windowName;
 	temp.input = input;
 	temp.output = output;
-	temp.dilationElement = 0;
-	temp.dilationSize = 0;
+	temp.Element = 0;
+	temp.Size = 0;
 
 	namedWindow(windowName,WINDOW_AUTOSIZE);
 
 	createTrackbar("Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", windowName,
-			&temp.dilationElement, max_elem,
+			&temp.Element, max_elem,
 			Dilation,&temp);
 
 	createTrackbar("Kernel size:\n 2n +1", windowName,
-			&temp.dilationSize, max_kernel_size,
+			&temp.Size, max_kernel_size,
 			Dilation,&temp);
 
 
@@ -176,8 +176,8 @@ void Dilation(int , void * object)
 {
 	//IoO * recTemp = reinterpret_cast<IoO *> (object);
 	IoO * recTemp = static_cast<struct IoO *> (object);
-	int dilationElement = recTemp->dilationElement;
-	int dilationSize = recTemp->dilationSize;
+	int dilationElement = recTemp->Element;
+	int dilationSize = recTemp->Size;
 
 	int dilation_type = 0;
 	if(dilationElement == 0 ){dilation_type = MORPH_RECT;}
@@ -188,6 +188,117 @@ void Dilation(int , void * object)
 			                            Size((2*dilationSize) + 1,(2*dilationSize) + 1),
 			                            Point(dilationSize,dilationSize));
 	dilate(recTemp->input,recTemp->output,element);
+	imshow(recTemp->Str,recTemp->output);
+	object = static_cast<void*> (&recTemp);
+}
+
+void demoErosion(Mat input, Mat output)
+{
+	//int dilationElement = 0;
+	//int dilationSize = 0;
+	int const max_elem = 2;
+	int const max_kernel_size = 21;
+	std::string windowName = "Erosion Demo";
+	IoO temp;
+	temp.Str = windowName;
+	temp.input = input;
+	temp.output = output;
+	temp.Element = 0;
+	temp.Size = 0;
+
+	namedWindow(windowName,WINDOW_AUTOSIZE);
+
+	createTrackbar("Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", windowName,
+			&temp.Element, max_elem,
+			Erosion,&temp);
+
+	createTrackbar("Kernel size:\n 2n +1", windowName,
+			&temp.Size, max_kernel_size,
+			Erosion,&temp);
+
+
+	//Dilation(0,0);
+	Dilation(0,&temp);
+
+	std::cout <<"End of Erosion demo"<<std::endl;
+	waitKey(0);
+}
+
+void Erosion(int , void * object)
+{
+	//IoO * recTemp = reinterpret_cast<IoO *> (object);
+	IoO * recTemp = static_cast<struct IoO *> (object);
+	int dilationElement = recTemp->Element;
+	int dilationSize = recTemp->Size;
+
+	int dilation_type = 0;
+	if(dilationElement == 0 ){dilation_type = MORPH_RECT;}
+	else if(dilationElement == 1 ){dilation_type = MORPH_CROSS;}
+	else if(dilationElement == 2 ){dilation_type = MORPH_ELLIPSE;}
+
+	Mat element = getStructuringElement(dilation_type,
+			                            Size((2*dilationSize) + 1,(2*dilationSize) + 1),
+			                            Point(dilationSize,dilationSize));
+	erode(recTemp->input,recTemp->output,element);
+	imshow(recTemp->Str,recTemp->output);
+	object = static_cast<void*> (&recTemp);
+}
+
+void demoMorphologyOperation(Mat input, Mat output)
+{
+	//int dilationElement = 0;
+	//int dilationSize = 0;
+	int const max_elem = 2;
+	int const max_kernel_size = 21;
+	std::string windowName = "Morphology Operations Demo";
+	IoO temp;
+	temp.Str = windowName;
+	temp.input = input;
+	temp.output = output;
+	temp.Element = 0;
+	temp.Size = 0;
+	temp.Operation = 0;
+
+
+	namedWindow(windowName,WINDOW_AUTOSIZE);
+
+	createTrackbar("Operator:\n 0: Erode - 1: Dilate  \n 2: Opening - 3: Closing  \n 4: Gradient - 5: Top Hat \n 6: Black Hat", windowName,
+			&temp.Operation, max_elem + max_elem + max_elem,
+			MorphologyOperation,&temp);
+
+	createTrackbar("Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", windowName,
+			&temp.Element, max_elem,
+			MorphologyOperation,&temp);
+
+	createTrackbar("Kernel size:\n 2n +1", windowName,
+			&temp.Size, max_kernel_size,
+			MorphologyOperation,&temp);
+
+
+	//Dilation(0,0);
+	Dilation(0,&temp);
+
+	std::cout <<"End of Morphology Operation demo"<<std::endl;
+	waitKey(0);
+}
+
+void MorphologyOperation(int , void* object)
+{
+	//IoO * recTemp = reinterpret_cast<IoO *> (object);
+	IoO * recTemp = static_cast<struct IoO *> (object);
+	int dilationElement = recTemp->Element;
+	int dilationSize = recTemp->Size;
+	int operation = recTemp->Operation;
+
+	int dilation_type = 0;
+	if(dilationElement == 0 ){dilation_type = MORPH_RECT;}
+	else if(dilationElement == 1 ){dilation_type = MORPH_CROSS;}
+	else if(dilationElement == 2 ){dilation_type = MORPH_ELLIPSE;}
+
+	Mat element = getStructuringElement(dilation_type,
+			                            Size((2*dilationSize) + 1,(2*dilationSize) + 1),
+			                            Point(dilationSize,dilationSize));
+	morphologyEx(recTemp->input,recTemp->output,operation,element);
 	imshow(recTemp->Str,recTemp->output);
 	object = static_cast<void*> (&recTemp);
 }
