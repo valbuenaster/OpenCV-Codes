@@ -218,7 +218,7 @@ void demoErosion(Mat input, Mat output)
 
 
 	//Dilation(0,0);
-	Dilation(0,&temp);
+	Erosion(0,&temp);
 
 	std::cout <<"End of Erosion demo"<<std::endl;
 	waitKey(0);
@@ -276,7 +276,7 @@ void demoMorphologyOperation(Mat input, Mat output)
 
 
 	//Dilation(0,0);
-	Dilation(0,&temp);
+	MorphologyOperation(0,&temp);
 
 	std::cout <<"End of Morphology Operation demo"<<std::endl;
 	waitKey(0);
@@ -301,4 +301,67 @@ void MorphologyOperation(int , void* object)
 	morphologyEx(recTemp->input,recTemp->output,operation,element);
 	imshow(recTemp->Str,recTemp->output);
 	object = static_cast<void*> (&recTemp);
+}
+
+void extractVerticalHorizontalLines(const std::string imagePath)
+{
+	Mat source = imread(imagePath, IMREAD_COLOR);
+	Mat grayVersion;
+	Mat bw;
+	Mat Horizontal;
+	Mat Vertical;
+	Mat hE;
+	Mat vE;
+	Mat Edges;
+	Mat Smooth;
+
+	int Factor = 30;
+	int horizontal_size;
+	int vertical_size;
+
+	imshow(imagePath, source);
+	if(source.channels() == 3)
+	{
+		cvtColor(source, grayVersion, COLOR_BGR2GRAY);
+	}else{
+		grayVersion = source;
+	}
+	displayImage(grayVersion, imagePath, Point(80,250), 0);
+
+	//Turns the image black & white
+	adaptiveThreshold(~grayVersion,bw, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, -2);
+	displayImage(bw,"Binary",Point(80,250),0);
+
+	Horizontal = bw.clone();
+	Vertical = bw.clone();
+
+	horizontal_size = Horizontal.cols/Factor;
+	vertical_size = Vertical.rows/Factor;
+
+	hE = getStructuringElement(MORPH_RECT,Size(horizontal_size,1));
+	vE = getStructuringElement(MORPH_RECT,Size(1,vertical_size));
+
+	erodeFirst_dilateLater(Horizontal, hE, Point(-1,-1));
+	erodeFirst_dilateLater(Vertical, vE, Point(-1,-1));
+
+	displayImage(Horizontal,"Horizontal",Point(80,250),0);
+	displayImage(Vertical,"Vertical",Point(80,250),0);
+
+	bitwise_not(Vertical,Vertical);
+	adaptiveThreshold(Vertical,Edges,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY, 3,-2);
+	displayImage(Edges,"Edges",Point(80,250),0);
+
+	dilate(Edges,Edges,Mat::ones(2,2,CV_8UC1));
+	displayImage(Edges,"Edges",Point(80,250),0);
+	Vertical.copyTo(Smooth);
+	blur(Smooth,Smooth,Size(2,2));
+	Smooth.copyTo(Vertical,Edges);
+
+	displayImage(Smooth,"Smooth",Point(0,0),0);
+}
+
+void erodeFirst_dilateLater(Mat & mat, Mat & Element, Point pos)
+{
+	erode(mat,mat,Element,pos);
+	dilate(mat,mat,Element,pos);
 }

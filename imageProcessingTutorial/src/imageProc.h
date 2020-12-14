@@ -39,6 +39,9 @@ void Erosion(int , void* object);
 void demoMorphologyOperation(Mat inputFilter,Mat dest_morphOp);
 void MorphologyOperation(int , void* object);
 
+void extractVerticalHorizontalLines(const std::string imagePath);
+void erodeFirst_dilateLater(Mat & mat, Mat & Element, Point pos);
+
 struct IoO
 {
 	Mat input;

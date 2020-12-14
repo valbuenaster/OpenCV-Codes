@@ -64,7 +64,14 @@ int main()
 	demoErosion(inputFilter,dest_erosion);
 	demoMorphologyOperation(inputFilter,dest_morphOp);
 
-	cout << "Llega aqui"<< endl;
+	cout << "Extraction horizontal, and vertical lines" << endl;
+	std::string strName = "MusicNotes.png";
+	extractVerticalHorizontalLines(strName);
+
+
+
+	cout << "That's all folks!"<< endl;
+
 
 	return 0;
 }
