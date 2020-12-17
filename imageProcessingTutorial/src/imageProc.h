@@ -42,6 +42,9 @@ void MorphologyOperation(int , void* object);
 void extractVerticalHorizontalLines(const std::string imagePath);
 void erodeFirst_dilateLater(Mat & mat, Mat & Element, Point pos);
 
+void demoThreshold(Mat & input,const std::string imagePath, Mat & output);
+void thresholdFunction(int , void* object);
+
 struct IoO
 {
 	Mat input;

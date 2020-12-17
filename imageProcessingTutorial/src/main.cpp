@@ -47,14 +47,18 @@ int main()
 
 	cout << "Testing filters"<<endl;
 	std::string StrName1 = "Test1.png";
-	std::string  StrName2 = "Test2.png";
-	Mat inputFilter = imread(StrName2, IMREAD_COLOR);
+	std::string StrName2 = "Test2.png";
+
+	std::string StrNameInput = StrName1;
+
+	Mat inputFilter = imread(StrNameInput, IMREAD_COLOR);
 	Mat destination = inputFilter.clone();
 	Mat dest_dilation = inputFilter.clone();
 	Mat dest_erosion = inputFilter.clone();
 	Mat dest_morphOp = inputFilter.clone();
+	Mat dest_Threshold = inputFilter.clone();
 
-	displayImage(inputFilter, StrName2, Point(2*W,200),0);
+	displayImage(inputFilter, StrNameInput, Point(2*W,200),0);
 
 	filtering(inputFilter, destination, 3);
 
@@ -68,7 +72,8 @@ int main()
 	std::string strName = "MusicNotes.png";
 	extractVerticalHorizontalLines(strName);
 
-
+	cout << "Threshold"<< endl;
+	demoThreshold(inputFilter,StrNameInput,dest_Threshold);
 
 	cout << "That's all folks!"<< endl;
 

@@ -365,3 +365,40 @@ void erodeFirst_dilateLater(Mat & mat, Mat & Element, Point pos)
 	erode(mat,mat,Element,pos);
 	dilate(mat,mat,Element,pos);
 }
+
+void demoThreshold(Mat & input,const std::string imagePath, Mat & output)
+{
+	Mat gray;
+	IoO Temp;
+	int max_operation = 4;
+	int max_value = 255;
+
+	cvtColor(input,gray, COLOR_BGR2GRAY);
+
+	Temp.Str = imagePath;
+	Temp.input = gray;
+	Temp.output = output;
+	Temp.Element = 0;
+	Temp.Size = 0;
+	Temp.Operation = 0;
+
+	namedWindow(imagePath, WINDOW_AUTOSIZE);
+
+	createTrackbar("Type: \n 0: Binary \n 1: Binary Inverted \n 2: Truncate \n 3: To Zero \n 4: To Zero Inverted",imagePath,
+			&Temp.Operation,max_operation,thresholdFunction, &Temp);
+
+	createTrackbar("Value",imagePath,&Temp.Element,max_value,thresholdFunction, &Temp);
+
+	thresholdFunction(0,&Temp);
+	waitKey(0);
+}
+
+void thresholdFunction(int , void* object)
+{
+	IoO * recTemp = static_cast<struct IoO *> (object);
+	int max_binary_value = 255;
+
+	threshold(recTemp->input,recTemp->output,recTemp->Element,max_binary_value,recTemp->Operation);
+	imshow(recTemp->Str,recTemp->output);
+	object = static_cast<void*> (&recTemp);
+}
