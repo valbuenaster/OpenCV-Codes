@@ -12,6 +12,8 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
+#include <math.h>
 
 #define DELAY_BLUR 100
 #define MAX_KERNEL_LENGTH 31
@@ -45,6 +47,14 @@ void erodeFirst_dilateLater(Mat & mat, Mat & Element, Point pos);
 void demoThreshold(Mat & input,const std::string imagePath, Mat & output);
 void thresholdFunction(int , void* object);
 
+void demoVideo_ThresholdinRange();
+static void on_low_H_thresh_trackbar(int, void* object);
+static void on_high_H_thresh_trackbar(int, void* object);
+static void on_low_S_thresh_trackbar(int, void* object);
+static void on_high_S_thresh_trackbar(int, void* object);
+static void on_low_V_thresh_trackbar(int, void* object);
+static void on_high_V_thresh_trackbar(int, void* object);
+
 struct IoO
 {
 	Mat input;
@@ -54,5 +64,16 @@ struct IoO
 	int Size;
 	int Operation;
 };
+
+struct infThr
+{
+	std::string windowName;
+	int low_H;
+	int high_H;
+	int low_S;
+	int high_S;
+	int low_V;
+	int high_V;
+}typedef infoThreshold;
 
 #endif /* SRC_IMAGEPROC_H_ */

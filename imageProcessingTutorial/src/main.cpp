@@ -75,6 +75,10 @@ int main()
 	cout << "Threshold"<< endl;
 	demoThreshold(inputFilter,StrNameInput,dest_Threshold);
 
+	cout << "Threshold with inRange operation and video!"<<endl;
+
+	demoVideo_ThresholdinRange();
+
 	cout << "That's all folks!"<< endl;
 
 

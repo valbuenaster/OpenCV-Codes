@@ -402,3 +402,140 @@ void thresholdFunction(int , void* object)
 	imshow(recTemp->Str,recTemp->output);
 	object = static_cast<void*> (&recTemp);
 }
+
+void demoVideo_ThresholdinRange()
+{
+	char key = ' ';
+	const int max_value_H = 360/2;
+	const int max_value = 255;
+	int low_H = 0;
+	int low_S = 0;
+	int low_V = 0;
+	int high_H = max_value_H;
+	int high_S = max_value;
+	int high_V = max_value;
+	const std::string window_capture_name = "Video Capture";
+	const std::string window_detection_name = "Object Detection";
+
+	Mat frame, frame_HSV, frameThreshold;
+ 	VideoCapture cap(0);
+
+ 	namedWindow(window_capture_name);
+ 	namedWindow(window_detection_name);
+
+ 	infoThreshold temp;
+ 	temp.windowName = window_detection_name;
+	temp.low_H = low_H;
+	temp.high_H = high_H;
+	temp.low_S = low_S;
+	temp.high_S = high_S;
+	temp.low_V = low_V;
+	temp.high_V = high_V;
+
+ 	createTrackbar("Low H", window_detection_name, &temp.low_H,
+ 			       max_value_H,on_low_H_thresh_trackbar,&temp);
+ 	createTrackbar("High H", window_detection_name, &temp.high_H,
+ 			       max_value_H,on_high_H_thresh_trackbar,&temp);
+
+ 	createTrackbar("Low S", window_detection_name, &temp.low_S,
+ 			       max_value,on_low_S_thresh_trackbar,&temp);
+ 	createTrackbar("High S", window_detection_name, &temp.high_S,
+ 			       max_value,on_high_S_thresh_trackbar,&temp);
+
+ 	createTrackbar("Low V", window_detection_name, &temp.low_V,
+ 			       max_value,on_low_V_thresh_trackbar,&temp);
+ 	createTrackbar("High V", window_detection_name, &temp.high_V,
+ 			       max_value,on_high_V_thresh_trackbar,&temp);
+
+
+ 	while(true)
+ 	{
+ 	 	on_low_H_thresh_trackbar(0,&temp);
+ 	 	on_high_H_thresh_trackbar(0,&temp);
+ 	 	on_low_V_thresh_trackbar(0,&temp);
+ 	 	on_high_V_thresh_trackbar(0,&temp);
+ 	 	on_low_S_thresh_trackbar(0,&temp);
+ 	 	on_high_S_thresh_trackbar(0,&temp);
+
+ 		cap >> frame;
+
+ 		if(frame.empty()) break;
+
+ 		cvtColor(frame,frame_HSV,COLOR_BGR2HSV);
+
+ 		inRange(frame_HSV,Scalar(temp.low_H, temp.low_S, temp.low_V), Scalar(temp.high_H, temp.high_S, temp.high_V), frameThreshold);
+
+ 		imshow(window_capture_name,frame);
+ 		imshow(window_detection_name,frameThreshold);
+
+ 		key = (char) waitKey(30);
+
+ 		if((key=='q')||(key=='Q')||(key==27)) break;
+ 	}
+}
+
+static void on_low_H_thresh_trackbar(int, void* object)
+{
+	infoThreshold * Temp = static_cast<infoThreshold *> (object);
+	int low_H = fmin(Temp->high_H - 1, Temp->low_H);
+	setTrackbarPos("Low H", Temp->windowName,low_H);
+
+	Temp->low_H = low_H;
+
+	object = static_cast<void*> (&Temp);
+}
+
+static void on_high_H_thresh_trackbar(int, void* object)
+{
+	infoThreshold * Temp = static_cast<infoThreshold *> (object);
+	int high_H = fmax(Temp->high_H, Temp->low_H + 1);
+	setTrackbarPos("High H", Temp->windowName,high_H);
+
+	Temp->high_H = high_H;
+
+	object = static_cast<void*> (&Temp);
+}
+
+static void on_low_S_thresh_trackbar(int, void* object)
+{
+	infoThreshold * Temp = static_cast<infoThreshold *> (object);
+	int low_S = fmin(Temp->high_S - 1, Temp->low_S);
+	setTrackbarPos("Low S", Temp->windowName,low_S);
+
+	Temp->low_S = low_S;
+
+	object = static_cast<void*> (&Temp);
+}
+
+static void on_high_S_thresh_trackbar(int, void* object)
+{
+	infoThreshold * Temp = static_cast<infoThreshold *> (object);
+	int high_S = fmax(Temp->high_S, Temp->low_S + 1);
+	setTrackbarPos("High S", Temp->windowName,high_S);
+
+	Temp->high_S = high_S;
+
+	object = static_cast<void*> (&Temp);
+}
+
+static void on_low_V_thresh_trackbar(int, void* object)
+{
+	infoThreshold * Temp = static_cast<infoThreshold *> (object);
+	int low_V = fmin(Temp->high_V - 1, Temp->low_V);
+	setTrackbarPos("Low V", Temp->windowName,low_V);
+
+	Temp->low_V = low_V;
+
+	object = static_cast<void*> (&Temp);
+}
+
+static void on_high_V_thresh_trackbar(int, void* object)
+{
+	infoThreshold * Temp = static_cast<infoThreshold *> (object);
+	int high_V = fmax(Temp->high_V, Temp->low_V + 1);
+	setTrackbarPos("High V", Temp->windowName,high_V);
+
+	Temp->high_V = high_V;
+
+	object = static_cast<void*> (&Temp);
+}
