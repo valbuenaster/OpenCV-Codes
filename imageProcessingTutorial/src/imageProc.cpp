@@ -539,3 +539,50 @@ static void on_high_V_thresh_trackbar(int, void* object)
 
 	object = static_cast<void*> (&Temp);
 }
+
+void demoCannyEdgeDetector(const std::string & path)
+{
+	const int max_lowThreshold = 100;
+	std::string window_name = "Canny Edge Detector";
+	Mat src = imread(path,IMREAD_COLOR);
+	Mat dst;
+	Mat src_gray;
+	IoO Temp;
+
+	if(src.empty())
+	{
+		std::cout<<"No go. Could not open the image"<<std::endl;
+	}else
+	{
+		dst.create(src.size(),src.type());
+		cvtColor(src,src_gray,COLOR_BGR2GRAY);
+
+		Temp.Str = window_name;
+		Temp.input = src_gray;
+		Temp.Element = max_lowThreshold / 2;
+
+		namedWindow(window_name, WINDOW_AUTOSIZE);
+		createTrackbar("Min Threshold:", window_name,&Temp.Element,max_lowThreshold,CannyThreshold,&Temp);
+
+		CannyThreshold(0,&Temp);
+		waitKey(0);
+	}
+}
+
+void CannyThreshold(int , void* object)
+{
+	IoO * recTemp = static_cast<struct IoO *> (object);
+	Mat detectedEdges;
+	const int ratio = 3;
+	const int kernel_size = 3;
+
+	blur(recTemp->input,detectedEdges,Size(3,3));
+	Canny(detectedEdges,detectedEdges,recTemp->Element,ratio*(recTemp->Element),kernel_size);
+	recTemp->output = Scalar::all(0);
+
+	//Originally, it does it with the src matrix, I am going to do it with src_gray
+	recTemp->input.copyTo(recTemp->output, detectedEdges);
+
+	imshow(recTemp->Str, recTemp->output);
+	object = static_cast<void*> (&recTemp);
+}

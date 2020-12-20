@@ -43,8 +43,6 @@ int main()
 	//moveWindow(Str2,W, 200);
 	displayImage(image_Rook, Str2, Point(W,200),0);
 
-
-
 	cout << "Testing filters"<<endl;
 	std::string StrName1 = "Test1.png";
 	std::string StrName2 = "Test2.png";
@@ -76,8 +74,15 @@ int main()
 	demoThreshold(inputFilter,StrNameInput,dest_Threshold);
 
 	cout << "Threshold with inRange operation and video!"<<endl;
-
 	demoVideo_ThresholdinRange();
+
+	cout << "Edge detection with Canny filter" <<endl;
+	//std::string imageCanny = "LegoBlocks.png";
+	//std::string imageCanny = "OldBuilding.png";
+	std::string imageCanny = "SolarPannels.png";
+
+	demoCannyEdgeDetector(imageCanny);
+
 
 	cout << "That's all folks!"<< endl;
 

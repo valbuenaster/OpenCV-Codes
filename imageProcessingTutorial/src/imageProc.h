@@ -55,6 +55,9 @@ static void on_high_S_thresh_trackbar(int, void* object);
 static void on_low_V_thresh_trackbar(int, void* object);
 static void on_high_V_thresh_trackbar(int, void* object);
 
+void demoCannyEdgeDetector(const std::string & path);
+void CannyThreshold(int , void* object);
+
 struct IoO
 {
 	Mat input;
