@@ -576,7 +576,8 @@ void CannyThreshold(int , void* object)
 	const int ratio = 3;
 	const int kernel_size = 3;
 
-	blur(recTemp->input,detectedEdges,Size(3,3));
+	//blur(recTemp->input,detectedEdges,Size(3,3));
+	medianBlur(recTemp->input,detectedEdges,3);
 	Canny(detectedEdges,detectedEdges,recTemp->Element,ratio*(recTemp->Element),kernel_size);
 	recTemp->output = Scalar::all(0);
 
@@ -585,4 +586,57 @@ void CannyThreshold(int , void* object)
 
 	imshow(recTemp->Str, recTemp->output);
 	object = static_cast<void*> (&recTemp);
+}
+
+void demoHoughStraighLinesDetector(const std::string & path)
+{
+	std::string window_name1 = "Standard Hough Transform Straigh Lines";
+	std::string window_name2 = "Probabilistic Hough Transform Straigh Lines";
+	Mat src = imread(path,IMREAD_GRAYSCALE);
+	Mat dst;
+	Mat cdst;
+	Mat cdstP;
+	std::vector<Vec2f> lines;
+	std::vector<Vec4i> linesP;
+
+	if(src.empty())
+	{
+		std::cout<<"No go. Could not open the image"<<std::endl;
+	}else
+	{
+		Canny(src,dst,50,200,3);
+
+		cvtColor(dst,cdst,COLOR_GRAY2BGR);
+		cdstP = cdst.clone();
+
+		HoughLines(dst,lines, 1, CV_PI/180, 150,0,0);
+
+		for(auto elem: lines)
+		{
+			float rho = elem[0];
+			float theta = elem[1];
+			Point p1,p2;
+			double a = cos(theta);
+			double b = sin(theta);
+			double x0 = a*rho;
+			double y0 = b*rho;
+
+			p1.x = cvRound(x0 + 1000*(-b));
+			p1.y = cvRound(y0 + 1000*(a));
+			p2.x = cvRound(x0 - 1000*(-b));
+			p2.y = cvRound(y0 - 1000*(a));
+
+			createLine(cdst, p1, p2);
+		}
+
+		HoughLinesP(dst,linesP, 1, CV_PI/180, 50, 50, 10);
+
+		for(auto elem: linesP) createLine(cdstP, Point(elem[0],elem[1]), Point(elem[2],elem[3]));
+
+		imshow(path, src);
+		imshow(window_name1,cdst);
+		imshow(window_name2,cdstP);
+
+		waitKey(0);
+	}
 }

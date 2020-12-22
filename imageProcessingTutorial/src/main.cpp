@@ -83,6 +83,13 @@ int main()
 
 	demoCannyEdgeDetector(imageCanny);
 
+	cout << "Hough Lines detection" <<endl;
+	//std::string imageHough = "Maze2.png";
+	std::string imageHough = "Maze4.png";
+	//std::string imageHough = "Maze1.jpeg";
+	//std::string imageHough = "Maze3.jpeg";
+	demoHoughStraighLinesDetector(imageHough);
+
 
 	cout << "That's all folks!"<< endl;
 

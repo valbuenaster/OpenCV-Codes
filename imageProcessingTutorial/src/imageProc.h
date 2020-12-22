@@ -14,6 +14,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <math.h>
+#include <vector>
 
 #define DELAY_BLUR 100
 #define MAX_KERNEL_LENGTH 31
@@ -57,6 +58,8 @@ static void on_high_V_thresh_trackbar(int, void* object);
 
 void demoCannyEdgeDetector(const std::string & path);
 void CannyThreshold(int , void* object);
+
+void demoHoughStraighLinesDetector(const std::string & path);
 
 struct IoO
 {
