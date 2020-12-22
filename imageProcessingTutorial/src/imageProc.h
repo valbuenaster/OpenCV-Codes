@@ -60,6 +60,8 @@ void demoCannyEdgeDetector(const std::string & path);
 void CannyThreshold(int , void* object);
 
 void demoHoughStraighLinesDetector(const std::string & path);
+void myHoughLines(int , void * object );
+void myHoughLinesP(int , void * object );
 
 struct IoO
 {

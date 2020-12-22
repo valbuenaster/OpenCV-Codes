@@ -590,14 +590,18 @@ void CannyThreshold(int , void* object)
 
 void demoHoughStraighLinesDetector(const std::string & path)
 {
+	const int max_Threshold = 500;
+	const int max_LL = 200;
+	const int max_LG = 200;
 	std::string window_name1 = "Standard Hough Transform Straigh Lines";
 	std::string window_name2 = "Probabilistic Hough Transform Straigh Lines";
 	Mat src = imread(path,IMREAD_GRAYSCALE);
 	Mat dst;
 	Mat cdst;
 	Mat cdstP;
-	std::vector<Vec2f> lines;
-	std::vector<Vec4i> linesP;
+
+	IoO data1;
+	IoO data2;
 
 	if(src.empty())
 	{
@@ -606,37 +610,86 @@ void demoHoughStraighLinesDetector(const std::string & path)
 	{
 		Canny(src,dst,50,200,3);
 
-		cvtColor(dst,cdst,COLOR_GRAY2BGR);
-		cdstP = cdst.clone();
+		//
+		//cdstP = cdst.clone();
 
-		HoughLines(dst,lines, 1, CV_PI/180, 150,0,0);
+		data1.input = dst;
+		data1.output = cdst;
+		data1.Str = window_name1;
+		data1.Element = 150;
+		data1.Size = 0;
+		data1.Operation = 0;
 
-		for(auto elem: lines)
-		{
-			float rho = elem[0];
-			float theta = elem[1];
-			Point p1,p2;
-			double a = cos(theta);
-			double b = sin(theta);
-			double x0 = a*rho;
-			double y0 = b*rho;
+		namedWindow(path, WINDOW_NORMAL);
+		namedWindow(window_name1, WINDOW_NORMAL);
+		namedWindow(window_name2, WINDOW_NORMAL);
 
-			p1.x = cvRound(x0 + 1000*(-b));
-			p1.y = cvRound(y0 + 1000*(a));
-			p2.x = cvRound(x0 - 1000*(-b));
-			p2.y = cvRound(y0 - 1000*(a));
+		createTrackbar("Threshold:", window_name1,&data1.Element,max_Threshold,myHoughLines,&data1);
 
-			createLine(cdst, p1, p2);
-		}
+		myHoughLines(0 , &data1);
 
-		HoughLinesP(dst,linesP, 1, CV_PI/180, 50, 50, 10);
+		data2.input = dst;
+		data2.output = cdstP;
+		data2.Str = window_name2;
+		data2.Element = 50 ;//threshold
+		data2.Size = 50;//minLineLeght
+		data2.Operation = 10;//maxLineGap
 
-		for(auto elem: linesP) createLine(cdstP, Point(elem[0],elem[1]), Point(elem[2],elem[3]));
+		createTrackbar("Threshold:", window_name2,&data2.Element,max_Threshold,myHoughLinesP,&data2);
+		createTrackbar("min Line Leght:", window_name2,&data2.Size,max_LL,myHoughLinesP,&data2);
+		createTrackbar("max Line Gap:", window_name2,&data2.Operation,max_LG,myHoughLinesP,&data2);
+
+		myHoughLinesP(0 , &data2);
 
 		imshow(path, src);
-		imshow(window_name1,cdst);
-		imshow(window_name2,cdstP);
 
 		waitKey(0);
 	}
+}
+
+void myHoughLines(int , void * object )
+{
+	IoO * recTemp = static_cast<struct IoO *> (object);
+	std::vector<Vec2f> lines;
+
+	cvtColor(recTemp->input,recTemp->output,COLOR_GRAY2BGR);
+
+	HoughLines(recTemp->input,lines, 1, CV_PI/180, recTemp->Element,0,0);
+
+	for(auto elem: lines)
+	{
+		float rho = elem[0];
+		float theta = elem[1];
+		Point p1,p2;
+		double a = cos(theta);
+		double b = sin(theta);
+		double x0 = a*rho;
+		double y0 = b*rho;
+
+		p1.x = cvRound(x0 + 1000*(-b));
+		p1.y = cvRound(y0 + 1000*(a));
+		p2.x = cvRound(x0 - 1000*(-b));
+		p2.y = cvRound(y0 - 1000*(a));
+
+		createLine(recTemp->output, p1, p2);
+	}
+
+	imshow(recTemp->Str,recTemp->output);
+
+	object = static_cast<void*> (&recTemp);
+}
+
+void myHoughLinesP(int , void * object )
+{
+	IoO * recTemp = static_cast<struct IoO *> (object);
+	std::vector<Vec4i> linesP;
+
+	cvtColor(recTemp->input,recTemp->output,COLOR_GRAY2BGR);
+
+	HoughLinesP(recTemp->input,linesP, 1, CV_PI/180, recTemp->Element, recTemp->Size, recTemp->Operation);
+	for(auto elem: linesP) createLine(recTemp->output, Point(elem[0],elem[1]), Point(elem[2],elem[3]));
+
+	imshow(recTemp->Str,recTemp->output);
+
+	object = static_cast<void*> (&recTemp);
 }
