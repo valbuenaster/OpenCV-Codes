@@ -693,3 +693,125 @@ void myHoughLinesP(int , void * object )
 
 	object = static_cast<void*> (&recTemp);
 }
+
+void demoHoughCirclesDetector(const std::string & path)
+{
+	const int max_SizeBlur = 30;
+	const int max_R = 120;
+	Mat src = imread(path,IMREAD_COLOR);
+	std::string window_name1 = "Hough Circles Transform";
+	IoO data1;
+
+
+	if(src.empty())
+	{
+		std::cout<<"No go. Could not open the image"<<std::endl;
+	}else
+	{
+
+		namedWindow(path, WINDOW_NORMAL);
+		namedWindow(window_name1, WINDOW_NORMAL);
+
+		data1.input = src;
+		data1.output = src;
+		data1.Str = window_name1;
+		data1.Element = 1;//min radius
+		data1.Size = 2;
+		data1.Operation = 80;//max radius
+
+		createTrackbar("Size blur:", window_name1,&data1.Size,max_SizeBlur,myHoughCircles,&data1);
+		createTrackbar("Min Radius:", window_name1,&data1.Element,max_R,myHoughCircles,&data1);
+		createTrackbar("Max Radius:", window_name1,&data1.Operation,max_R,myHoughCircles,&data1);
+
+		imshow(path,src);
+		myHoughCircles(0, &data1);
+
+		waitKey(0);
+	}
+}
+
+void myHoughCircles(int , void * object )
+{
+	IoO * recTemp = static_cast<struct IoO *> (object);
+	Mat gray;
+	Mat freshIm = recTemp->output.clone();
+	std::vector<Vec3f> circles;
+
+	cvtColor(recTemp->input,gray,COLOR_BGR2GRAY);
+	medianBlur(gray,gray,2*(recTemp->Size) + 1);
+	HoughCircles(gray,circles, HOUGH_GRADIENT, 1,
+			     gray.rows/16, 100, 30, recTemp->Element,recTemp->Operation);
+
+	for(auto elem: circles)
+	{
+		Point center = Point(elem[0],elem[1]);
+		int radius = elem[2];
+		circle(freshIm,center,1,Scalar(0,100,100),3, LINE_AA);
+		circle(freshIm,center,radius,Scalar(255,0,255),3, LINE_AA);
+	}
+
+	imshow(recTemp->Str,freshIm);
+
+	object = static_cast<void*> (&recTemp);
+}
+
+void demoAffineTransformations(const std::string & path)
+{
+	Mat src = imread(path,IMREAD_COLOR);
+	Mat srcC;
+	Mat warp_mat;
+	Mat warp_dst;
+	Mat rot_mat;
+	Mat warp_rotate_dst;
+	Point2f srcTri[3];
+	Point2f dstTri[3];
+	Point center;
+	double angle;
+	double scale;
+
+	if(src.empty())
+	{
+		std::cout<<"No go. Could not open the image"<<std::endl;
+	}else
+	{
+		srcC = src.clone();
+		//The corners of the image
+		srcTri[0] = Point2f( 0.0, 0.0);
+		srcTri[1] = Point2f( src.cols - 1.0, 0.0);
+		srcTri[2] = Point2f( 0.0, src.rows -1.0);
+
+		//Warped corners?
+		dstTri[0] = Point2f( 0.0, src.rows*0.33);
+		dstTri[1] = Point2f( src.cols*0.85, src.rows*0.25);
+		dstTri[2] = Point2f( src.cols*0.15, src.rows*0.7);
+
+		circle(src,srcTri[0],1,Scalar(0,0,255),3, LINE_AA);
+		circle(src,srcTri[1],1,Scalar(0,0,255),3, LINE_AA);
+		circle(src,srcTri[2],1,Scalar(0,0,255),3, LINE_AA);
+
+		circle(src,dstTri[0],1,Scalar(255,0,0),3, LINE_AA);
+		circle(src,dstTri[1],1,Scalar(255,0,0),3, LINE_AA);
+		circle(src,dstTri[2],1,Scalar(255,0,0),3, LINE_AA);
+
+		namedWindow(path, WINDOW_NORMAL);
+		imshow(path,src);
+
+		warp_mat = getAffineTransform(srcTri,dstTri);
+		warp_dst = Mat::zeros(src.rows,src.cols,src.type());
+
+		warpAffine(srcC,warp_dst,warp_mat,warp_dst.size());
+		namedWindow("warped source", WINDOW_NORMAL);
+		imshow("warped source",warp_dst);
+
+		center = Point(warp_dst.cols/2,warp_dst.rows/2);
+		angle = -50.0;
+		scale = 0.6;
+
+		rot_mat = getRotationMatrix2D( center, angle, scale);
+		warpAffine( warp_dst, warp_rotate_dst, rot_mat,warp_dst.size());
+		namedWindow("warp + rotate", WINDOW_NORMAL);
+		imshow("warp + rotate",warp_rotate_dst);
+
+		waitKey(0);
+	}
+}

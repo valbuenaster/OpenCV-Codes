@@ -63,6 +63,11 @@ void demoHoughStraighLinesDetector(const std::string & path);
 void myHoughLines(int , void * object );
 void myHoughLinesP(int , void * object );
 
+void demoHoughCirclesDetector(const std::string & path);
+void myHoughCircles(int , void * object );
+
+void demoAffineTransformations(const std::string & path);
+
 struct IoO
 {
 	Mat input;

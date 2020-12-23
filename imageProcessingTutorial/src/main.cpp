@@ -24,6 +24,7 @@ using std::cin;
 
 int main()
 {
+/*
 	std::string Str1 = "Drawing 1: Atom";
 	std::string Str2 = "Drawing 2: Rook";
 
@@ -72,7 +73,7 @@ int main()
 
 	cout << "Threshold"<< endl;
 	demoThreshold(inputFilter,StrNameInput,dest_Threshold);
-
+*/
 	cout << "Threshold with inRange operation and video!"<<endl;
 	demoVideo_ThresholdinRange();
 
@@ -83,12 +84,23 @@ int main()
 
 	demoCannyEdgeDetector(imageCanny);
 
-	cout << "Hough Lines detection" <<endl;
+	cout << "Hough Straight Lines detection" <<endl;
+	//std::string imageHough = "LegoBlocks.png";
 	//std::string imageHough = "Maze2.png";
 	std::string imageHough = "Maze4.png";
 	//std::string imageHough = "Maze1.jpeg";
 	//std::string imageHough = "Maze3.jpeg";
 	demoHoughStraighLinesDetector(imageHough);
+
+
+	cout << "Hough Circles detection" <<endl;
+	std::string imageHoughCircles = "Baaalls.png";
+	//std::string imageHoughCircles = "Planets.png";
+	demoHoughCirclesDetector(imageHoughCircles);
+
+	cout << "Affine transformation" << endl;
+	std::string imageAffTrans = "Maze3Tiny.jpeg";
+	demoAffineTransformations(imageAffTrans);
 
 
 	cout << "That's all folks!"<< endl;
